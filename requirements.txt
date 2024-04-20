@@ -365,7 +365,7 @@ Sastrawi
 scikit-image
 scikit-learn
 scikit-learn-intelex
-scipy
+scipy==1.10.0
 Scrapy
 seaborn
 SecretStorage
