@@ -6,7 +6,7 @@ Before developing a classification model, Exploratory Data Analysis (EDA) and Da
 
 The prediction models developed in this project are:
 1. SVM
-2. Decision Tree
+2. XGBoost
 3. Random Forest
 4. Naive Bayes
 5. ANN
