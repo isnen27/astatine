@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from pandas_profiling import ProfileReport
+from ydata_profiling import ProfileReport
 from pandas.plotting import parallel_coordinates
 from IPython.display import display, Markdown
 
