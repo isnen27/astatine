@@ -9,3 +9,4 @@ scikit-learn-intelex
 scipy==1.10.0
 seaborn
 streamlit
+ydata_profiling
