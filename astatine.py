@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
 #import missingno as msno
-from pandas_profiling import ProfileReport
+from ydata_profiling import ProfileReport
 
 # Extended File
 from eda import describe_detail, html_report
