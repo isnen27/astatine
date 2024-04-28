@@ -1,6 +1,7 @@
 # for basic operations
 import numpy as np
 import pandas as pd
+import streamlit as st
 
 #for visualizations
 import matplotlib.pyplot as plt
@@ -14,7 +15,6 @@ import matplotlib.style as style
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
-%matplotlib inline
 import missingno as msno
 
 # from pandas_profiling import ProfileReport
@@ -37,6 +37,7 @@ from xgboost import XGBClassifier
 from sklearn.naive_bayes import GaussianNB
 from keras.models import Sequential
 from keras.layers import Dense
+import itertools
 
 #Evaluation
 from sklearn.metrics import confusion_matrix,RocCurveDisplay, classification_report
@@ -50,45 +51,67 @@ import pickle
 warnings.filterwarnings('ignore')
 
 def svm_model(X_train, Y_train, X_test, Y_test):
-    # define the model
+    # Define and train the model
     svm = SVC(kernel='rbf', C=1.0)
-    
-    # train the model
     svm.fit(X_train, Y_train)
-    
+
+    # Predictions
     y_pred_svm = svm.predict(X_test)
     
-    print('SVM Evaluation')
-    print('Training set score: {:.4f}'.format(svm.score(X_train, Y_train)))
-    print('Test set score: {:.4f}'.format(svm.score(X_test, Y_test)))
-    
-    # check MSE & RMSE 
+    # Calculate scores
+    train_score = svm.score(X_train, Y_train)
+    test_score = svm.score(X_test, Y_test)
+
+    # Calculate MSE & RMSE
     mse_svm = mean_squared_error(Y_test, y_pred_svm)
-    print('Mean Squared Error : '+ str(mse_svm))
-    rmse_svm = math.sqrt(mean_squared_error(Y_test, y_pred_svm))
-    print('Root Mean Squared Error : '+ str(rmse_svm))
-    print('\n')
-    
-    matrix = classification_report(Y_test, y_pred_svm)
-    print(matrix)
-    
-    # calculating and plotting the confusion matrix
+    rmse_svm = np.sqrt(mse_svm)
+
+    # Generate classification report
+    report = classification_report(Y_test, y_pred_svm, output_dict=True)
+
+    # Calculate confusion matrix
     cm_svm = confusion_matrix(Y_test, y_pred_svm)
+
+    # Display scores
+    st.write('**SVM Evaluation**')
+    st.write('Training set score: {:.4f}'.format(train_score))
+    st.write('Test set score: {:.4f}'.format(test_score))
+    st.write('Mean Squared Error: {:.4f}'.format(mse_svm))
+    st.write('Root Mean Squared Error: {:.4f}'.format(rmse_svm))
+    st.write('\n')
+
+    # Display classification report
+    st.write('Classification Report:')
+    df_report = pd.DataFrame(report).transpose()
+    st.write(df_report)
+
+    # Plot confusion matrix
+    st.write('Confusion Matrix:')
     plot_confusion_matrix_svm(cm_svm)
-    plt.show()
+
+    # Save the model
+    joblib.dump(svm, 'svm_model.pkl')
+    st.write("SVM model saved successfully!")
 
 def plot_confusion_matrix_svm(cm, classes=None, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+    if classes is None:
+        classes = np.arange(cm.shape[0])
+    
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        st.write("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        st.write('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
+    
+    # Label sumbu x dan y
+    if classes is None:
+        classes = np.unique(np.concatenate((Y_train, Y_test), axis=None))
     tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
+    plt.xticks(tick_marks, classes)
     plt.yticks(tick_marks, classes)
 
     fmt = '.2f' if normalize else 'd'
@@ -101,37 +124,57 @@ def plot_confusion_matrix_svm(cm, classes=None, normalize=False, title='Confusio
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    st.pyplot()
+
 
 def xgboost_model(X_train, Y_train, X_test, Y_test):
+    # Define the model
     xg = XGBClassifier(eval_metric='error', learning_rate=0.1)
     xg.fit(X_train, Y_train)
 
+    # Predictions
     y_pred_xg = xg.predict(X_test)
-    print('XGBoost Evaluation')
-    print('Training set score: {:.4f}'.format(xg.score(X_train, Y_train)))
-    print('Test set score: {:.4f}'.format(xg.score(X_test, Y_test)))
+    
+    # Calculate scores
+    train_score = xg.score(X_train, Y_train)
+    test_score = xg.score(X_test, Y_test)
 
-    # check MSE & RMSE 
+    # Calculate MSE & RMSE
     mse_xg = mean_squared_error(Y_test, y_pred_xg)
-    print('Mean Squared Error : '+ str(mse_xg))
-    rmse_xg = math.sqrt(mean_squared_error(Y_test, y_pred_xg))
-    print('Root Mean Squared Error : '+ str(rmse_xg))
-    print('\n')
+    rmse_xg = np.sqrt(mse_xg)
 
-    matrix = classification_report(Y_test, y_pred_xg)
-    print(matrix)
-
-    # calculating and plotting the confusion matrix
+    # Generate classification report
+    report = classification_report(Y_test, y_pred_xg, output_dict=True)
+    
+    # Calculate confusion matrix
     cm_xg = confusion_matrix(Y_test, y_pred_xg)
-    plot_confusion_matrix_xg(cm_xg)
-    plt.show()
+    
+    # Display scores
+    st.write('**XGBoost Evaluation**')
+    st.write('Training set score: {:.4f}'.format(train_score))
+    st.write('Test set score: {:.4f}'.format(test_score))
+    st.write('Mean Squared Error: {:.4f}'.format(mse_xg))
+    st.write('Root Mean Squared Error: {:.4f}'.format(rmse_xg))
+    st.write('\n')
+
+    # Display classification report as a table
+    st.write('Classification Report:')
+    df_report = pd.DataFrame(report).transpose()
+    st.write(df_report)
+
+    # Plot confusion matrix
+    plot_confusion_matrix_xg(cm_xg, classes=np.unique(Y_test))
+    
+    # Save the model
+    joblib.dump(xg, 'xgboost_model.pkl')
+    st.write("XGBoost model saved successfully!")
 
 def plot_confusion_matrix_xg(cm, classes=None, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        st.write("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        st.write('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -150,41 +193,61 @@ def plot_confusion_matrix_xg(cm, classes=None, normalize=False, title='Confusion
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    st.pyplot()
 
 def random_forest_model(X_train, Y_train, X_test, Y_test):
+    # Define the model
     rf = RandomForestClassifier(max_depth=12, n_estimators=10, random_state=42)
 
-    # fitting the model on the train data
+    # Fitting the model on the train data
     rf.fit(X_train, Y_train)
 
-    # make predictions on test set
+    # Make predictions on the test set
     y_pred_rf = rf.predict(X_test)
 
-    print('Random Forest Evaluation')
-    print('Training set score: {:.4f}'.format(rf.score(X_train, Y_train)))
-    print('Test set score: {:.4f}'.format(rf.score(X_test, Y_test)))
+    # Calculate scores
+    train_score = rf.score(X_train, Y_train)
+    test_score = rf.score(X_test, Y_test)
 
-    # check MSE & RMSE 
+    # Check MSE & RMSE 
     mse_rf = mean_squared_error(Y_test, y_pred_rf)
-    print('Mean Squared Error : '+ str(mse_rf))
-    rmse_rf = math.sqrt(mean_squared_error(Y_test, y_pred_rf))
-    print('Root Mean Squared Error : '+ str(rmse_rf))
-    print('\n')
+    rmse_rf = np.sqrt(mean_squared_error(Y_test, y_pred_rf))
 
-    matrix = classification_report(Y_test, y_pred_rf)
-    print(matrix)
+    # Generate classification report
+    report = classification_report(Y_test, y_pred_rf, output_dict=True)
 
-    # calculating and plotting the confusion matrix
+    # Calculate confusion matrix
     cm_rf = confusion_matrix(Y_test, y_pred_rf)
+    
+    # Display scores
+    st.write('**Random Forest Evaluation**')
+    st.write('Training set score: {:.4f}'.format(train_score))
+    st.write('Test set score: {:.4f}'.format(test_score))
+    st.write('Mean Squared Error: {:.4f}'.format(mse_rf))
+    st.write('Root Mean Squared Error: {:.4f}'.format(rmse_rf))
+    st.write('\n')
+
+    # Display classification report as a table
+    st.write('Classification Report:')
+    df_report = pd.DataFrame(report).transpose()
+    st.write(df_report)
+
+    # Plot confusion matrix
     plot_confusion_matrix_rf(cm_rf)
-    plt.show()
+
+    # Save the model
+    joblib.dump(rf, 'random_forest_model.pkl')
+    st.write("Random Forest model saved successfully!")
 
 def plot_confusion_matrix_rf(cm, classes=None, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+    if classes is None:
+        classes = np.arange(cm.shape[0])
+        
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        st.write("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        st.write('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -203,41 +266,61 @@ def plot_confusion_matrix_rf(cm, classes=None, normalize=False, title='Confusion
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    st.pyplot()
 
 def naive_bayes_model(X_train, Y_train, X_test, Y_test):
-    # define the model
+    # Define the model
     gnb = GaussianNB()
 
-    # train the model
+    # Train the model
     gnb.fit(X_train, Y_train)
 
+    # Make predictions
     y_pred_gnb = gnb.predict(X_test)
 
-    print('Naive Bayes Evaluation')
-    print('Training set score: {:.4f}'.format(gnb.score(X_train, Y_train)))
-    print('Test set score: {:.4f}'.format(gnb.score(X_test, Y_test)))
+    # Calculate scores
+    train_score = gnb.score(X_train, Y_train)
+    test_score = gnb.score(X_test, Y_test)
 
-    # check MSE & RMSE
+    # Check MSE & RMSE
     mse_gnb = mean_squared_error(Y_test, y_pred_gnb)
-    print('Mean Squared Error : ' + str(mse_gnb))
-    rmse_gnb = math.sqrt(mean_squared_error(Y_test, y_pred_gnb))
-    print('Root Mean Squared Error : ' + str(rmse_gnb))
-    print('\n')
+    rmse_gnb = np.sqrt(mse_gnb)
 
-    matrix = classification_report(Y_test, y_pred_gnb)
-    print(matrix)
+    # Generate classification report
+    report = classification_report(Y_test, y_pred_gnb, output_dict=True)
 
-    # calculating and plotting the confusion matrix
+    # Calculate confusion matrix
     cm_gnb = confusion_matrix(Y_test, y_pred_gnb)
+    
+    # Display scores
+    st.write('**Naive Bayes Evaluation**')
+    st.write('Training set score: {:.4f}'.format(train_score))
+    st.write('Test set score: {:.4f}'.format(test_score))
+    st.write('Mean Squared Error: {:.4f}'.format(mse_gnb))
+    st.write('Root Mean Squared Error: {:.4f}'.format(rmse_gnb))
+    st.write('\n')
+
+    # Display classification report as a table
+    st.write('Classification Report:')
+    df_report = pd.DataFrame(report).transpose()
+    st.write(df_report)
+
+    # Plot confusion matrix
     plot_confusion_matrix_gnb(cm_gnb)
-    plt.show()
+
+    # Save the model
+    joblib.dump(gnb, 'naive_bayes_model.pkl')
+    st.write("Naive Bayes model saved successfully!")
 
 def plot_confusion_matrix_gnb(cm, classes=None, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+    if classes is None:
+        classes = np.arange(cm.shape[0])
+        
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        st.write("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        st.write('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -256,6 +339,7 @@ def plot_confusion_matrix_gnb(cm, classes=None, normalize=False, title='Confusio
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    st.pyplot()
 
 def ann_model(X_train, Y_train, X_test, Y_test):
     # Define the model
@@ -274,9 +358,11 @@ def ann_model(X_train, Y_train, X_test, Y_test):
     train_score_ann = model_ann.evaluate(X_train, Y_train, verbose=0)
     test_score_ann = model_ann.evaluate(X_test, Y_test, verbose=0)
 
-    print('ANN Evaluation')
-    print('Training set accuracy: {:.4f}'.format(train_score_ann[1]))
-    print('Test set accuracy: {:.4f}'.format(test_score_ann[1]))
+    # Display scores
+    st.write('**ANN Evaluation**')
+    st.write('Training set accuracy: {:.4f}'.format(train_score_ann[1]))
+    st.write('Test set accuracy: {:.4f}'.format(test_score_ann[1]))
+    st.write('\n')
 
     # Predictions
     y_pred_prob_ann = model_ann.predict(X_test)
@@ -284,26 +370,36 @@ def ann_model(X_train, Y_train, X_test, Y_test):
 
     # Check MSE & RMSE
     mse_ann = mean_squared_error(Y_test, y_pred_ann)
-    print('Mean Squared Error: {:.4f}'.format(mse_ann))
-    rmse_ann = math.sqrt(mse_ann)
-    print('Root Mean Squared Error: {:.4f}'.format(rmse_ann))
-    print('\n')
+    rmse_ann = np.sqrt(mse_ann)
 
-    # Classification report
-    matrix = classification_report(Y_test, y_pred_ann)
-    print(matrix)
+    # Generate classification report
+    report = classification_report(Y_test, y_pred_ann, output_dict=True)
 
-    # Calculating and plotting the confusion matrix
+    # Display classification report as a table
+    st.write('Classification Report:')
+    df_report = pd.DataFrame(report).transpose()
+    st.write(df_report)
+
+    # Calculate confusion matrix
     cm_ann = confusion_matrix(Y_test, y_pred_ann)
-    plot_confusion_matrix_ann(cm_ann, show_absolute=True, show_normed=True, colorbar=True)
-    plt.show()
+    
+    # Plot confusion matrix
+    plot_confusion_matrix_ann(cm_ann)
+
+    # Save the model
+    model_save_path = "ann_model.keras"
+    model_ann.save(model_save_path)
+    st.write("ANN model saved successfully!")
 
 def plot_confusion_matrix_ann(cm, classes=None, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+    if classes is None:
+        classes = np.arange(cm.shape[0])
+        
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        st.write("Normalized confusion matrix")
     else:
-        print('Confusion matrix, without normalization')
+        st.write('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -322,9 +418,9 @@ def plot_confusion_matrix_ann(cm, classes=None, normalize=False, title='Confusio
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    st.pyplot()
 
-def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann,
-                    rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann):
+def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann):
     # Data for all models
     models_data = {
         'Model': ['SVM', 'XGBoost', 'Random Forest', 'Naive Bayes', 'ANN'],
@@ -347,8 +443,7 @@ def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, 
     return sorted_models
 
 # for astatine.py:
-# sorted_models = evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann,
-#                                  rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
+# sorted_models = evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
 # print(sorted_models)
 
 def plot_roc_curve(models, Y_test, y_preds):
@@ -368,12 +463,12 @@ def plot_roc_curve(models, Y_test, y_preds):
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
-    plt.show()
+    st.pyplot()
 
     # Display AUC for each model
     print("Area under the Curve (AUC) for each model:")
     for model, auc_score in models_roc_auc.items():
-        print(f"{model}: {auc_score}")
+        st.write(f"{model}: {auc_score}")
 
 # for astatine.py:
 # models = {'SVM': svm, 'XGBoost': xg, 'Random Forest': rf, 'Naive Bayes': gnb, 'ANN': model_ann}
