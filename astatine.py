@@ -182,8 +182,11 @@ The prediction models developed in this project are:
        plot_correlation_heatmap(df)
        st.subheader("Correlation with Diabetes_binary")
        plot_correlation_with_target(df)
-       st.write('''Conclusion:\n Strong Correlation: GenHlth, HighBP, DiffWalk, BMI\n
-Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack, PhysHlth, Stroke, CholCheck, MentHlth\n Moderate Corellation with negative relation: Income, Education, PhysActivity, HvyAlcoholConsump\n Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
+       st.write('''Conclusion:\n
+Strong Correlation: GenHlth, HighBP, DiffWalk, BMI\n
+Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack, PhysHlth, Stroke, CholCheck, MentHlth\n
+Moderate Corellation with negative relation: Income, Education, PhysActivity, HvyAlcoholConsump\n
+Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        st.subheader("VIF (Variance Inflation Factor)")
        vif_result = calc_VIF(df)
        st.write(vif_result)
