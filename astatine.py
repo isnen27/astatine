@@ -36,7 +36,7 @@ from keras.models import load_model
 # Extended File
 from eda import describe_detail, html_report, display_column_info,plot_binary_pie,shapiro_test,plot_boxplots, plot_histograms, apply_mappings,plot_categorical_distribution, plot_bmi_distribution, plot_bmi_diabetes_relation, plot_stacked_bar, plot_diabetes_frequency_by_age, plot_education_diabetes_relation, plot_income_diabetes_relation, plot_diabetes_frequency_by_genhlth, plot_correlation_heatmap, plot_correlation_with_target, calc_VIF, perform_ANOVA, perform_ChiSquare
 from prepo import imbalance_treatment, imbalance_treatment2, data_split_and_scale
-from model import svm_model, plot_confusion_matrix_svm, xgboost_model, plot_confusion_matrix_xg, random_forest_model, plot_confusion_matrix_rf, naive_bayes_model, plot_confusion_matrix_gnb, ann_model, plot_confusion_matrix_ann, evaluate_models, plot_roc_curve
+from model import svm_model, plot_confusion_matrix_svm, xgboost_model, plot_confusion_matrix_xg, random_forest_model, plot_confusion_matrix_rf, naive_bayes_model, plot_confusion_matrix_gnb, ann_model, plot_confusion_matrix_ann, evaluate_models, plot_roc_auc
 
 
 # Load dataset
@@ -277,7 +277,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        model_ann.add(Dense(64, activation='relu'))
        model_ann.add(Dense(1, activation='sigmoid'))
        model_ann.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-       history = model_ann.fit(X_train, Y_train, epochs=10, batch_size=32, validation_data=(X_test, Y_test),rf.fit(X_train, Y_train)
+       history = model_ann.fit(X_train, Y_train, epochs=10, batch_size=32, validation_data=(X_test, Y_test), verbose=0)
        # Predictions
        y_pred_prob_ann = model_ann.predict(X_test)
        y_pred_ann = (y_pred_prob_ann > 0.5).astype(int)
