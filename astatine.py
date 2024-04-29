@@ -103,19 +103,18 @@ The prediction models developed in this project are:
        display_column_info()
 
     if menu == "Basic Exploration" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
-        st.subheader("Let's begin!")
-        medic_option = st.radio("Are you medical staff?",["Yes", "No"])
-        if st.button("Process"):
-           if medic_option == "Yes" :
-              st.title('Diabetes Binary Health Indicators - BRFSS2015')
-              describe_detail(df)
-           if medic_option == "No":
-              # Display HTML Report
-              st.title('Diabetes Binary Health Indicators - BRFSS2015')
-              if st.button('Generate Report'):
-                 with open("final_project_eda_report.html", "r") as f:
-                      html_content = f.read()
-                 st.components.v1.html(html_content, height=1000, width=1000)
+       st.subheader("Let's begin!")
+       medic_option = st.radio("Are you medical staff?", ["Yes", "No"])
+       if st.button("Process"):
+          if medic_option == "Yes":
+             st.title('Diabetes Binary Health Indicators - BRFSS2015')
+             describe_detail(df)
+          elif medic_option == "No":
+             # Display HTML Report
+             st.title('Diabetes Binary Health Indicators - BRFSS2015')
+             with open("final_project_eda_report.html", "r") as f:
+                   html_content = f.read()
+             st.components.v1.html(html_content, height=1000, width=1000)
     if menu == "Univariat Analysis & Insight" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        variabel_biner = ['Diabetes_binary', 'HighBP', 'HighChol', 'CholCheck', 'Smoker', 'Stroke','HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'DiffWalk', 'Sex']
        st.subheader("Check Data Distributions for Binary Variables")
@@ -151,8 +150,7 @@ The prediction models developed in this project are:
        3.For the Mental Health (MentHlth) feature, the distribution is not normal with a tendency towards being positively skewed. Most respondents exhibit good mental health levels.\n 
        4.Regarding the Physical Activity (PhysActivity) feature, some respondents do not allocate time for physical activities outside their routine activities. In other words, the majority of respondents do not exercise regularly.\n 
        5.Based on the frequency distribution of the Education feature, most respondents are educated individuals as they have completed higher education levels.\n 
-       6.Based on the frequency distribution of the Income feature, most respondents are high-income individuals ($75,000 or more).\n
-       ''')
+       6.Based on the frequency distribution of the Income feature, most respondents are high-income individuals ($75,000 or more).\n''')
        st.subheader("BMI Category Distribution")
        plot_bmi_distribution(df_2)
        st.write("Based on the distribution of BMI, the majority of respondents are experiencing Obesity and Overweight. The selection of respondents for the sample is appropriate considering that both categories are indeed prone to degenerative diseases, one of which is diabetes.")
