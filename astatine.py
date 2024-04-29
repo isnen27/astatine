@@ -105,16 +105,17 @@ The prediction models developed in this project are:
     if menu == "Basic Exploration" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
         st.subheader("Let's begin!")
         medic_option = st.radio("Are you medical staff?",["Yes", "No"])
-        if medic_option == "Yes" :
+        if st.button("Process"):
+           if medic_option == "Yes" :
               st.title('Diabetes Binary Health Indicators - BRFSS2015')
               describe_detail(df)
-        if medic_option == "No":
-           # Display HTML Report
-           st.title('Diabetes Binary Health Indicators - BRFSS2015')
-           if st.button('Generate Report'):
-              with open("final_project_eda_report.html", "r") as f:
-                   html_content = f.read()
-              st.components.v1.html(html_content, height=1000, width=1000)
+           if medic_option == "No":
+              # Display HTML Report
+              st.title('Diabetes Binary Health Indicators - BRFSS2015')
+              if st.button('Generate Report'):
+                 with open("final_project_eda_report.html", "r") as f:
+                      html_content = f.read()
+                 st.components.v1.html(html_content, height=1000, width=1000)
     if menu == "Univariat Analysis & Insight" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        variabel_biner = ['Diabetes_binary', 'HighBP', 'HighChol', 'CholCheck', 'Smoker', 'Stroke','HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'DiffWalk', 'Sex']
        st.subheader("Check Data Distributions for Binary Variables")
