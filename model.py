@@ -19,7 +19,7 @@ import io
 
 # from pandas_profiling import ProfileReport
 from pandas.plotting import parallel_coordinates
-from IPython.display import display, Markdown
+#from IPython.display import display, Markdown
 
 # for model preparation
 import sklearn
