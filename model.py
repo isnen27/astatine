@@ -15,7 +15,7 @@ import matplotlib.style as style
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
-import missingno as msno
+#import missingno as msno
 
 # from pandas_profiling import ProfileReport
 from pandas.plotting import parallel_coordinates
