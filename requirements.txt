@@ -1,7 +1,6 @@
 imblearn
 joblib
 keras
-math
 matplotlib
 matplotlib-inline
 mlxtend
