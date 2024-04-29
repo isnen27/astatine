@@ -424,8 +424,7 @@ def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, 
     # Data for all models
     models_data = {
         'Model': ['SVM', 'XGBoost', 'Random Forest', 'Naive Bayes', 'ANN'],
-        'Training set accuracy': [svm.score(X_train, Y_train), xg.score(X_train, Y_train),
-                                  rf.score(X_train, Y_train), gnb.score(X_train, Y_train),
+        'Training set accuracy': [svm.score(X_train, Y_train), xg.score(X_train, Y_train),rf.score(X_train, Y_train), gnb.score(X_train, Y_train),
                                   train_score_ann[1]],
         'Test set accuracy': [svm.score(X_test, Y_test), xg.score(X_test, Y_test),
                               rf.score(X_test, Y_test), gnb.score(X_test, Y_test),
@@ -446,16 +445,39 @@ def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, 
 # sorted_models = evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
 # print(sorted_models)
 
-def plot_roc_curve(models, Y_test, y_preds):
-    plt.figure(figsize=(10, 8))
+import streamlit as st
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
+
+def plot_roc_auc(X_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
+    # Dictionary to store AUC scores for each model
     models_roc_auc = {}
 
-    for model_name, y_pred in zip(models.keys(), y_preds):
-        fpr, tpr, _ = roc_curve(Y_test, y_pred)
-        roc_auc = auc(fpr, tpr)
-        models_roc_auc[model_name] = roc_auc
-        plt.plot(fpr, tpr, label='%s (AUC = %0.2f)' % (model_name, roc_auc))
+    # XGBoost
+    fpr_xg, tpr_xg, _ = roc_curve(Y_test, y_pred_xg)
+    roc_auc_xg = auc(fpr_xg, tpr_xg)
+    models_roc_auc['XGBoost'] = roc_auc_xg
+    plt.plot(fpr_xg, tpr_xg, label='XGBoost (AUC = %0.2f)' % roc_auc_xg)
 
+    # Random Forest
+    fpr_rf, tpr_rf, _ = roc_curve(Y_test, y_pred_rf)
+    roc_auc_rf = auc(fpr_rf, tpr_rf)
+    models_roc_auc['Random Forest'] = roc_auc_rf
+    plt.plot(fpr_rf, tpr_rf, label='Random Forest (AUC = %0.2f)' % roc_auc_rf)
+
+    # Naive Bayes
+    fpr_gnb, tpr_gnb, _ = roc_curve(Y_test, y_pred_gnb)
+    roc_auc_gnb = auc(fpr_gnb, tpr_gnb)
+    models_roc_auc['Naive Bayes'] = roc_auc_gnb
+    plt.plot(fpr_gnb, tpr_gnb, label='Naive Bayes (AUC = %0.2f)' % roc_auc_gnb)
+
+    # ANN
+    fpr_ann, tpr_ann, _ = roc_curve(Y_test, y_pred_ann)
+    roc_auc_ann = auc(fpr_ann, tpr_ann)
+    models_roc_auc['ANN'] = roc_auc_ann
+    plt.plot(fpr_ann, tpr_ann, label='ANN (AUC = %0.2f)' % roc_auc_ann)
+
+    # Plotting ROC curve
     plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
@@ -463,10 +485,10 @@ def plot_roc_curve(models, Y_test, y_preds):
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
-    st.pyplot()
+    plt.show()
 
     # Display AUC for each model
-    print("Area under the Curve (AUC) for each model:")
+    st.write("Area under the Curve (AUC) for each model:")
     for model, auc_score in models_roc_auc.items():
         st.write(f"{model}: {auc_score}")
 

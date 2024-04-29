@@ -230,19 +230,68 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        # Predictions
        y_pred_svm = svm.predict(X_test)
        # Calculate scores
-       train_score = svm.score(X_train, Y_train)
-       test_score = svm.score(X_test, Y_test)
+       train_score_svm = svm.score(X_train, Y_train)
+       test_score_svm = svm.score(X_test, Y_test)
        # Calculate MSE & RMSE
        mse_svm = mean_squared_error(Y_test, y_pred_svm)
        rmse_svm = np.sqrt(mse_svm)
+       
        #XGBost
+       xg = XGBClassifier(eval_metric='error', learning_rate=0.1)
+       xg.fit(X_train, Y_train)
+       # Predictions
+       y_pred_xg = xg.predict(X_test)
+       # Calculate scores
+       train_score_xg = xg.score(X_train, Y_train)
+       test_score_xg = xg.score(X_test, Y_test)
+       # Calculate MSE & RMSE
+       mse_xg = mean_squared_error(Y_test, y_pred_xg)
+       rmse_xg = np.sqrt(mse_xg)
        
        #Random Forest
+       rf = RandomForestClmodel_ann = Sequential()
+       rf.fit(X_train, Y_train)
+       # Predictions
+       y_pred_rf = rf.predict(X_test)
+       # Calculate scores
+       train_score = rf.score(X_train, Y_train)
+       test_score = rf.score(X_test, Y_test)
+       # Calculate MSE & RMSE
+       mse_rf = mean_squared_error(Y_test, y_pred_rf)
+       rmse_rf = np.sqrt(mean_squared_error(Y_test, y_pred_rf))
+       
        #Naive Bayes
+       gnb = GaussianNB()
+       gnb.fit(X_train, Y_train)
+       # Predictions
+       y_pred_gnb = gnb.predict(X_test)
+       # Calculate scores
+       train_score_gnb = gnb.score(X_train, Y_train)
+       test_score_gnb = gnb.score(X_test, Y_test)
+       # Calculate MSE & RMSE
+       mse_gnb = mean_squared_error(Y_test, y_pred_gnb)
+       rmse_gnb = np.sqrt(mse_gnb)
+       
        #ANN
+       model_ann.add(Dense(64, activation='relu', input_dim=X_train.shape[1]))
+       model_ann.add(Dense(64, activation='relu'))
+       model_ann.add(Dense(1, activation='sigmoid'))
+       model_ann.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+       history = model_ann.fit(X_train, Y_train, epochs=10, batch_size=32, validation_data=(X_test, Y_test),rf.fit(X_train, Y_train)
+       # Predictions
+       y_pred_prob_ann = model_ann.predict(X_test)
+       y_pred_ann = (y_pred_prob_ann > 0.5).astype(int)
+       # Calculate scores
+       train_score_ann = model_ann.evaluate(X_train, Y_train, verbose=0)
+       test_score_ann = model_ann.evaluate(X_test, Y_test, verbose=0)
+       # Calculate MSE & RMSE
+       mse_ann = mean_squared_error(Y_test, y_pred_ann)
+       rmse_ann = np.sqrt(mse_ann)
 
-       evaluated_models = evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
+       evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
        st.dataframe(evaluated_models)
+       st.subheader("ROC Plot")
+       plot_roc_auc(X_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
@@ -284,7 +333,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
           # Predict using the loaded model
           predicted_diabetes = loaded_model.predict(new_df)
           # Print prediction result
-          if predicted_diabetes[0][0] < 0.5:
+          if predicted_diabetes[0] > 0.5:
              st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
           else:
              st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
