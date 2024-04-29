@@ -144,12 +144,14 @@ The prediction models developed in this project are:
        df_2 = apply_mappings(df_2)
        st.subheader("Categorical Variable Distributions")
        plot_categorical_distribution(df_2)
-       st.write('''1.For the Age variable, the highest frequency is found in the age groups of 60 to 64 and 65 to 69. Most of the data is distributed among age groups that are no longer productive.\n 
+       st.write('''
+       1.For the Age variable, the highest frequency is found in the age groups of 60 to 64 and 65 to 69. Most of the data is distributed among age groups that are no longer productive.\n 
        2.The distribution of the General Health (GenHlth) feature is dominated by the categories Fair and Good. Generally, respondents show an intermediate level of general health, not bad, but not in prime condition either.\n 
        3.For the Mental Health (MentHlth) feature, the distribution is not normal with a tendency towards being positively skewed. Most respondents exhibit good mental health levels.\n 
        4.Regarding the Physical Activity (PhysActivity) feature, some respondents do not allocate time for physical activities outside their routine activities. In other words, the majority of respondents do not exercise regularly.\n 
        5.Based on the frequency distribution of the Education feature, most respondents are educated individuals as they have completed higher education levels.\n 
-       6.Based on the frequency distribution of the Income feature, most respondents are high-income individuals ($75,000 or more).''')
+       6.Based on the frequency distribution of the Income feature, most respondents are high-income individuals ($75,000 or more).\n
+       ''')
        st.subheader("BMI Category Distribution")
        plot_bmi_distribution(df_2)
        st.write("Based on the distribution of BMI, the majority of respondents are experiencing Obesity and Overweight. The selection of respondents for the sample is appropriate considering that both categories are indeed prone to degenerative diseases, one of which is diabetes.")
