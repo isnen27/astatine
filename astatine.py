@@ -131,7 +131,7 @@ The prediction models developed in this project are:
        st.write('''Conclusion: There's outlier in column BMI, GenHlth, MenHlth, PhysHlth, but all columns will transpose to categorical value.''')
        st.subheader("Check and Drop Duplicated Data")
        st.write("Duplicated data :", df.duplicated().sum())
-       df.drop_duplicates(inplace = True)
+       df.drop_duplicates()
        st.write("Data shape after remove duplicated data:", df.shape)
        columns_to_convert = ["Diabetes_binary", "HighBP", "HighChol", "CholCheck", "BMI", "Smoker", "Stroke", "HeartDiseaseorAttack","PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", "GenHlth", "MentHlth", "PhysHlth", "DiffWalk", "Sex", "Age", "Education", "Income"]
        df[columns_to_convert] = df[columns_to_convert].astype(int)
@@ -175,6 +175,9 @@ The prediction models developed in this project are:
        st.write("The prediabetes/diabetes condition mostly occurs in the Good category. Interestingly, even in the Very Good category, there are still quite a few respondents experiencing prediabetes/diabetes conditions.")
     if menu == "Bivariat Analysis - Feature Selection" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        st.set_option('deprecation.showPyplotGlobalUse', False)
+       df.drop_duplicates()
+       columns_to_convert = ["Diabetes_binary", "HighBP", "HighChol", "CholCheck", "BMI", "Smoker", "Stroke", "HeartDiseaseorAttack","PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", "GenHlth", "MentHlth", "PhysHlth", "DiffWalk", "Sex", "Age", "Education", "Income"]
+       df[columns_to_convert] = df[columns_to_convert].astype(int)
        st.subheader("Correlation of Features")
        plot_correlation_heatmap(df)
        st.subheader("Correlation with Diabetes_binary")
@@ -190,8 +193,8 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        st.subheader("Chi-Square Test")
        chi_square_result = perform_ChiSquare(df)
        st.write(chi_square_result)
-       st.write('''We will drop column "Fruits" , "Veggies" , "Sex" , "CholCheck" , " AnyHealthcare"''')
-       colomns = ["Fruits" , "Veggies" , "Sex" , "CholCheck" , "AnyHealthcare"]
+       st.write('''We will drop column "Fruits" , "Veggies" , "NoDocbcCost" , "CholCheck" , " AnyHealthcare"''')
+       colomns = ["Fruits" , "Veggies" , "NoDocbcCost" , "CholCheck" , "AnyHealthcare"]
        df = df.drop(colomns , axis= 1)
        st.write("Statistics Descriptive Dataframe after Feature Selection :")
        st.write(df.describe().T)
@@ -325,7 +328,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
         "HeartDiseaseorAttack": ["No", "Yes"],
         "PhysActivity": ["No", "Yes"],
         "HvyAlcoholConsump": ["No", "Yes"],
-        "NoDocbcCost": ["No", "Yes"],
+        "Sex": ["Female", "Male"],
         "GenHlth": list(range(1, 6)),
         "MentHlth": (0, 30),
         "PhysHlth": (0, 30),
@@ -384,6 +387,8 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
               new_value = st.number_input(f"{column} ({options})", min_value=0.0)
            else:  # Selectbox
               new_value = st.selectbox(f"{column}", options)
+           if column == "Sex":  # Convert "Male" or "Female" to numeric
+              new_value = 0 if new_value == "Female" else 1
            if new_value == "No":
               new_value = 0
            elif new_value == "Yes":
