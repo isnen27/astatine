@@ -1,7 +1,7 @@
 imblearn
-IPython
 joblib
 keras
+math
 matplotlib
 matplotlib-inline
 mlxtend
@@ -15,6 +15,7 @@ scipy==1.10.0
 seaborn
 sklearn
 streamlit
+statsmodels
 warnings
 xgboost
 ydata_profiling
