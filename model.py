@@ -15,7 +15,7 @@ import matplotlib.style as style
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
-#import missingno as msno
+import io
 
 # from pandas_profiling import ProfileReport
 from pandas.plotting import parallel_coordinates
@@ -420,7 +420,7 @@ def plot_confusion_matrix_ann(cm, classes=None, normalize=False, title='Confusio
     plt.xlabel('Predicted label')
     st.pyplot()
 
-def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann):
+def evaluate_models(X_train, X_test, Y_train, Y_test, svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann):
     # Data for all models
     models_data = {
         'Model': ['SVM', 'XGBoost', 'Random Forest', 'Naive Bayes', 'ANN'],
@@ -441,15 +441,7 @@ def evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, 
 
     return sorted_models
 
-# for astatine.py:
-# sorted_models = evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
-# print(sorted_models)
-
-import streamlit as st
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
-
-def plot_roc_auc(X_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
+def plot_roc_auc(X_test, Y_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
     # Dictionary to store AUC scores for each model
     models_roc_auc = {}
 
@@ -485,14 +477,11 @@ def plot_roc_auc(X_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curve')
     plt.legend(loc="lower right")
-    plt.show()
 
     # Display AUC for each model
     st.write("Area under the Curve (AUC) for each model:")
     for model, auc_score in models_roc_auc.items():
         st.write(f"{model}: {auc_score}")
 
-# for astatine.py:
-# models = {'SVM': svm, 'XGBoost': xg, 'Random Forest': rf, 'Naive Bayes': gnb, 'ANN': model_ann}
-# y_preds = [y_pred_svm, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann]
-# plot_roc_curve(models, Y_test, y_preds)
+    # Display the plot using st.pyplot()
+    st.pyplot()

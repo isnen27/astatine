@@ -15,9 +15,8 @@ import matplotlib.style as style
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
-#import missingno as msno
-#from pandas_profiling import ProfileReport
 from ydata_profiling import ProfileReport
+import io
 
 # for model preparation
 import sklearn
@@ -25,6 +24,17 @@ from sklearn.model_selection import train_test_split
 from imblearn.under_sampling import NearMiss
 from sklearn.model_selection import GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, accuracy_score
+from mlxtend.plotting import plot_confusion_matrix
+
+#for modelling
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from xgboost import XGBClassifier
+from sklearn.naive_bayes import GaussianNB
+from keras.models import Sequential
+from keras.layers import Dense
+import itertools
 
 #Save model
 import joblib
@@ -134,13 +144,13 @@ The prediction models developed in this project are:
        df_2 = apply_mappings(df_2)
        st.subheader("Categorical Variable Distributions")
        plot_categorical_distribution(df_2)
-       st.write("Insight")
+       st.write('''1.For the Age variable, the highest frequency is found in the age groups of 60 to 64 and 65 to 69. Most of the data is distributed among age groups that are no longer productive.\n 2.The distribution of the General Health (GenHlth) feature is dominated by the categories Fair and Good. Generally, respondents show an intermediate level of general health, not bad, but not in prime condition either.\n 3.For the Mental Health (MentHlth) feature, the distribution is not normal with a tendency towards being positively skewed. Most respondents exhibit good mental health levels.\n 4.Regarding the Physical Activity (PhysActivity) feature, some respondents do not allocate time for physical activities outside their routine activities. In other words, the majority of respondents do not exercise regularly.\n 5.Based on the frequency distribution of the Education feature, most respondents are educated individuals as they have completed higher education levels.\n 6.Based on the frequency distribution of the Income feature, most respondents are high-income individuals ($75,000 or more).''')
        st.subheader("BMI Category Distribution")
        plot_bmi_distribution(df_2)
-       st.write("Insight")
+       st.write("Based on the distribution of BMI, the majority of respondents are experiencing Obesity and Overweight. The selection of respondents for the sample is appropriate considering that both categories are indeed prone to degenerative diseases, one of which is diabetes.")
        st.subheader("Relation between BMI and Diabetes")
        plot_bmi_diabetes_relation(df_1)
-       st.write("Insight")
+       st.write("Based on the BMI distribution graph, BMI values experiencing prediabetes/diabetes conditions range between 20 - 40.")
        st.subheader("Stacked Bar Chart")
        cols = ["HighBP", "HighChol", "CholCheck", "BMI", "Smoker", "Stroke", "HeartDiseaseorAttack","PhysActivity", "Fruits", "Veggies", "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", "GenHlth", "MentHlth", "PhysHlth", "DiffWalk", "Sex", "Age", "Education", "Income"]
        plot_stacked_bar(df_2, cols)
@@ -156,7 +166,7 @@ The prediction models developed in this project are:
        st.write("The higher the income, the healthier people become.")
        st.subheader("Frequency of Diabetes Disease by General Health")
        plot_diabetes_frequency_by_genhlth(df_2)
-       st.write("Insight")
+       st.write("The prediabetes/diabetes condition mostly occurs in the Good category. Interestingly, even in the Very Good category, there are still quite a few respondents experiencing prediabetes/diabetes conditions.")
     if menu == "Bivariat Analysis - Feature Selection" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        st.set_option('deprecation.showPyplotGlobalUse', False)
        st.subheader("Correlation of Features")
@@ -249,7 +259,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        rmse_xg = np.sqrt(mse_xg)
        
        #Random Forest
-       rf = RandomForestClmodel_ann = Sequential()
+       rf = RandomForestClassifier(max_depth=12, n_estimators=10, random_state=42)
        rf.fit(X_train, Y_train)
        # Predictions
        y_pred_rf = rf.predict(X_test)
@@ -273,6 +283,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        rmse_gnb = np.sqrt(mse_gnb)
        
        #ANN
+       model_ann = Sequential()
        model_ann.add(Dense(64, activation='relu', input_dim=X_train.shape[1]))
        model_ann.add(Dense(64, activation='relu'))
        model_ann.add(Dense(1, activation='sigmoid'))
@@ -288,64 +299,114 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        mse_ann = mean_squared_error(Y_test, y_pred_ann)
        rmse_ann = np.sqrt(mse_ann)
 
-       evaluate_models(svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
+       evaluated_models = evaluate_models(X_train, X_test, Y_train, Y_test, svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
        st.dataframe(evaluated_models)
        st.subheader("ROC Plot")
-       plot_roc_auc(X_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
+       plot_roc_auc(X_test, Y_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
-       saved_model_path = "ann_model.keras"
+       saved_model_path = "ann2_model.keras"
        loaded_model = load_model(saved_model_path)
 
        # Define the range of values for each column
        column_ranges = {
-    "HighBP": "(0 for No, 1 for Yes)",
-    "HighChol": "(0 for No, 1 for Yes)",
-    "BMI": "(Numeric value, based on formula)",
-    "Smoker": "(0 for No, 1 for Yes)",
-    "Stroke": "(0 for No, 1 for Yes)",
-    "HeartDiseaseorAttack": "(0 for No, 1 for Yes)",
-    "PhysActivity": "(0 for No, 1 for Yes)",
-    "HvyAlcoholConsump": "(0 for No, 1 for Yes)",
-    "NoDocbcCost": "(0 for No, 1 for Yes)",
-    "GenHlth": "(Range: 1-5)",
-    "MentHlth": "(Numeric value between 0-30)",
-    "PhysHlth": "(Numeric value between 0-30)",
-    "DiffWalk": "(0 for No, 1 for Yes)",
-    "Age": "(Range: 1-13)",
-    "Education": "(Range: 1-6)",
-    "Income": "(Range: 1-8)"
-}
+        "HighBP": ["No", "Yes"],
+        "HighChol": ["No", "Yes"],
+        "BMI": "Numeric value, based on formula",
+        "Smoker": ["No", "Yes"],
+        "Stroke": ["No", "Yes"],
+        "HeartDiseaseorAttack": ["No", "Yes"],
+        "PhysActivity": ["No", "Yes"],
+        "HvyAlcoholConsump": ["No", "Yes"],
+        "NoDocbcCost": ["No", "Yes"],
+        "GenHlth": list(range(1, 6)),
+        "MentHlth": (0, 30),
+        "PhysHlth": (0, 30),
+        "DiffWalk": ["No", "Yes"],
+        "Age": list(range(1, 14)),
+        "Education": list(range(1, 7)),
+        "Income": list(range(1, 9))
+    }
        # Create UI for input
        st.title("Diabetes Prediction App")
+       expand_pred = st.expander("Filling instructions : ")
+       expand_pred.write('''1. For variables with options 0 and 1, 0 stands for Yes and 1 stands for No. Except for Sex, where 0 stands for Female and 1 stands for Male.\n 2.For the MentHlth and PhysHlth variables, values can be entered within the range of 0 - 30. The number indicates the number of days experiencing disturbances in mental or physical health.\n 3. For entries in the GenHlth variable, indicate the general health level as follows:\n
+\t1: 'Poor'\n
+\t2: 'Fair'\n
+\t3: 'Good'\n
+\t4: 'Very Good'\n
+\t5: 'Excellent'\n
+4. For Education, categories can be selected from 1 - 6 as follows:\n
+\t1: 'Never Attended School'\n
+\t2: 'Elementary'\n
+\t3: 'Junior High School'\n
+\t4: 'Senior High School'\n
+\t5: 'Some college or technical school'\n
+\t6: 'College graduate'\n
+5. For Income, categories can be selected from 1 - 8 as follows:\n
+\t1: 'Less than $10,000'\n
+\t2: '$10,000 to $14,999'\n
+\t3: '$15,000 to $19,999'\n
+\t4: '$20,000 to $24,999'\n
+\t5: '$25,000 to $34,999'\n
+\t6: '$35,000 to $49,999'\n
+\t7: '$50,000 to $74,999'\n
+\t8: '$75,000 or More'\n
+6. For Age, categories can be selected from 1 - 13 as follows:\n
+\t1: '18 to 24'\n
+\t2: '25 to 29'\n
+\t3: '30 to 34'\n
+\t4: '35 to 39'\n
+\t5: '40 to 44'\n
+\t6: '45 to 49'\n
+\t7: '50 to 54'\n
+\t8: '55 to 59'\n
+\t9: '60 to 64'\n
+\t10: '65 to 69'\n
+\t11: '70 to 74'\n
+\t12: '75 to 79'\n
+\t13: '80 or older''')
        
        new_data = {}
-       for column in column_ranges:
-           new_value = st.text_input(f"{column} {column_ranges[column]}")
-           new_data[column] = float(new_value) if new_value else None
+       for column, options in column_ranges.items():
+           if isinstance(options, list):  # Radio button
+              new_value = st.radio(f"{column} {options}", options)
+           elif isinstance(options, tuple):  # Slider
+              new_value = st.slider(f"{column} ({options[0]}-{options[1]})", options[0], options[1])
+           elif column == "BMI":  # Numeric input
+              new_value = st.number_input(f"{column} ({options})", min_value=0.0)
+           else:  # Selectbox
+              new_value = st.selectbox(f"{column}", options)
+           if new_value == "No":
+              new_value = 0
+           elif new_value == "Yes":
+              new_value = 1
+           new_data[column] = new_value
 
-       # Convert input data to DataFrame
-       new_df = pd.DataFrame([new_data])
-       
-       # Make prediction if all values are provided
-       if all(value is not None for value in new_data.values()):
-          # Predict using the loaded model
-          predicted_diabetes = loaded_model.predict(new_df)
-          # Print prediction result
-          if predicted_diabetes[0] > 0.5:
-             st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
+       # Process button
+       if st.button("Process"):
+          # Convert input data to DataFrame
+          new_df = pd.DataFrame([new_data])
+
+          # Make prediction if all values are provided
+          if all(value is not None for value in new_data.values()):
+               # Predict using the loaded model
+               predicted_diabetes = loaded_model.predict(new_df)
+               # Print prediction result
+               if predicted_diabetes[0] > 0.5:
+                  st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
+               else:
+                  st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
           else:
-             st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
-       else:
-          st.write("Please provide values for all features to make a prediction.")
+            st.write("Please provide values for all features to make a prediction.")
 
     if menu4 == "Conclution Remark" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        st.subheader("Conclution Remark")
        st.write('''
        1. The target variable Diabetes_binary has 2 classes. 0 is for no diabetes, and 1 is for prediabetes or diabetes. This dataset has 21 feature variables and is not balanced. This dataset has 21 feature variables.\n
        2. Variables that has strong corralation with diabetes are general health (GenHlth), high blood pressure (HighBP), difficulty walking (DiffWalk), and Body Mass Index (BMI).\n
-       3. The best model for predict prediabetes/diabetes stage is **ANN** with **accuracy of 0.88**.\n''')
+       3. The best model for predict prediabetes/diabetes stage is **ANN** with **accuracy of 0.87**.\n''')
 
 
 if __name__=="__main__":
