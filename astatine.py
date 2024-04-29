@@ -341,7 +341,7 @@ Moderate Corellation with positive relation: HighChol, Age, HeartDiseaseorAttack
        st.title("Diabetes Prediction App")
        expand_pred = st.expander("Filling instructions : ")
        expand_pred.write('''1. For variables with options 0 and 1, 0 stands for Yes and 1 stands for No. Except for Sex, where 0 stands for Female and 1 stands for Male.\n
-2.For the MentHlth and PhysHlth variables, values can be entered within the range of 0 - 30. The number indicates the number of days experiencing disturbances in mental or physical health.\n 
+2. For the MentHlth and PhysHlth variables, values can be entered within the range of 0 - 30. The number indicates the number of days experiencing disturbances in mental or physical health.\n 
 3. For entries in the GenHlth variable, indicate the general health level as follows:\n
 \t1: 'Poor'\n
 \t2: 'Fair'\n
