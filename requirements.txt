@@ -6,7 +6,6 @@ matplotlib-inline
 mlxtend
 numpy
 pandas
-pickle
 scikit-image
 scikit-learn
 scikit-learn-intelex
