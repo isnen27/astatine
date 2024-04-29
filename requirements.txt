@@ -11,7 +11,6 @@ scikit-learn
 scikit-learn-intelex
 scipy==1.10.0
 seaborn
-sklearn
 streamlit
 statsmodels
 warnings
