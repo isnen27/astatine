@@ -547,7 +547,7 @@ def plot_stacked_bar(df, cols):
         df_plot = create_plot_pivot(df, col)
         df_plot.plot(kind='bar', stacked=True, ax=axe[i])
         axe[i].set_xlabel(col)
-        axe[i].legend(["Non-Diabetic", "Diabetic"])
+        axe[i].legend(["Diabetic","Non-Diabetic"])
 
     plt.tight_layout()
     st.pyplot(fig)
