@@ -114,7 +114,8 @@ The prediction models developed in this project are:
              st.title('Diabetes Binary Health Indicators - BRFSS2015')
              with open("final_project_eda_report.html", "r") as f:
                    html_content = f.read()
-             st.markdown(html_content, unsafe_allow_html=True)
+             #st.markdown(html_content, unsafe_allow_html=True)
+	     st.components.v1.html(html_content, width=1000, height=1000, scrolling=True)
     if menu == "Univariat Analysis & Insight" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        variabel_biner = ['Diabetes_binary', 'HighBP', 'HighChol', 'CholCheck', 'Smoker', 'Stroke','HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'DiffWalk', 'Sex']
        st.subheader("Check Data Distributions for Binary Variables")
