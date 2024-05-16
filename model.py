@@ -441,9 +441,15 @@ def evaluate_models(X_train, X_test, Y_train, Y_test, svm, xg, rf, gnb, train_sc
 
     return sorted_models
 
-def plot_roc_auc(X_test, Y_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
+def plot_roc_auc(X_test, Y_test, y_pred_svm, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann):
     # Dictionary to store AUC scores for each model
     models_roc_auc = {}
+
+    # SVM
+    fpr_svm, tpr_svm, _ = roc_curve(Y_test, y_pred_svm)
+    roc_auc_svm = auc(fpr_svm, tpr_svm)
+    models_roc_auc['SVM'] = roc_auc_svm
+    plt.plot(fpr_svm, tpr_svm, label='SVM (AUC = %0.2f)' % roc_auc_svm)
 
     # XGBoost
     fpr_xg, tpr_xg, _ = roc_curve(Y_test, y_pred_xg)
