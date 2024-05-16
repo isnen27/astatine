@@ -317,7 +317,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        evaluated_models = evaluate_models(X_train, X_test, Y_train, Y_test, svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
        st.dataframe(evaluated_models)
        st.subheader("ROC Plot")
-       plot_roc_auc(X_test, Y_test, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
+       plot_roc_auc(X_test, Y_test, y_pred_svm, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
