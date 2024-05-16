@@ -242,6 +242,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
             ann_model(X_train, Y_train, X_test, Y_test)
         
     if menu3 == "Model Evaluation" and menu == "- - - - -" and menu2 == "- - - - -" and menu4 == "- - - - -":
+       st.set_option('deprecation.showPyplotGlobalUse', False)
        x_sm, y_sm = imbalance_treatment2(df)
        X_train , X_test , Y_train , Y_test = train_test_split(x_sm,y_sm, test_size=0.3 , random_state=37)
        scalar = StandardScaler()
