@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.gridspec as grid_spec
 from ydata_profiling import ProfileReport
+import streamlit.components.v1 as components
 import io
 
 # for model preparation
@@ -115,7 +116,7 @@ The prediction models developed in this project are:
              with open("final_project_eda_report.html", "r") as f:
                    html_content = f.read()
              #st.markdown(html_content, unsafe_allow_html=True)
-             st.components.v1.html(html_content, width=150, height=150, scrolling=True)
+             components.html(html_content, height=600, scrolling=True)
     if menu == "Univariat Analysis & Insight" and menu2 == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
        variabel_biner = ['Diabetes_binary', 'HighBP', 'HighChol', 'CholCheck', 'Smoker', 'Stroke','HeartDiseaseorAttack', 'PhysActivity', 'Fruits', 'Veggies', 'HvyAlcoholConsump', 'AnyHealthcare', 'NoDocbcCost', 'DiffWalk', 'Sex']
        st.subheader("Check Data Distributions for Binary Variables")
