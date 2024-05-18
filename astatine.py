@@ -325,16 +325,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
        saved_model_path = "ann2_model.keras"
-       #loaded_model = load_model(saved_model_path)
-       if not os.path.exists(saved_model_path):
-              st.error(f"Model file does not exist at the specified path: {saved_model_path}")
-       else:
-           try:
-              loaded_model = tf.keras.models.load_model(saved_model_path)
-              st.success("Model loaded successfully")
-           except Exception as e:
-              logging.error("Error loading model", exc_info=True)
-              st.error("Failed to load the model. Please check the logs for more details.")
+       loaded_model = load_model(saved_model_path)
 
        # Define the range of values for each column
        column_ranges = {
