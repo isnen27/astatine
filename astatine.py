@@ -46,6 +46,7 @@ import warnings
 import pickle
 from keras.models import save_model
 from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 # Extended File
 from eda import describe_detail, html_report, display_column_info,plot_binary_pie,shapiro_test,plot_boxplots, plot_histograms, apply_mappings,plot_categorical_distribution, plot_bmi_distribution, plot_bmi_diabetes_relation, plot_stacked_bar, plot_diabetes_frequency_by_age, plot_education_diabetes_relation, plot_income_diabetes_relation, plot_diabetes_frequency_by_genhlth, plot_correlation_heatmap, plot_correlation_with_target, calc_VIF, perform_ANOVA, perform_ChiSquare
@@ -324,9 +325,18 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
-       saved_model_path = "ann2_model.keras"
+       saved_model_path = 'ann2_model.keras'
        loaded_model = load_model(saved_model_path)
-
+       if not os.path.exists(saved_model_path):
+              st.error(f"Model file does not exist at the specified path: {saved_model_path}")
+       else:
+           try:
+              loaded_model = tf.keras.models.load_model(saved_model_path)
+              st.success("Model loaded successfully")
+           except Exception as e:
+              logging.error("Error loading model", exc_info=True)
+              st.error("Failed to load the model. Please check the logs for more details.")
+              return
        # Define the range of values for each column
        column_ranges = {
         "HighBP": ["No", "Yes"],
