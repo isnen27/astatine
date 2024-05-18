@@ -38,6 +38,7 @@ from sklearn.naive_bayes import GaussianNB
 from keras.models import Sequential
 from keras.layers import Dense
 import itertools
+import tensorflow as tf
 
 #Save model
 import joblib
@@ -329,7 +330,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
        else:
            try:
-              loaded_model = load_model(saved_model_path)
+              loaded_model = tf.keras.models.load_model(saved_model_path)
               st.success("Model loaded successfully")
            except Exception as e:
               logging.error("Error loading model", exc_info=True)
