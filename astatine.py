@@ -235,7 +235,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           st.session_state['X_train_scaled'] = scaler.fit_transform(st.session_state['X_train'])
           st.session_state['X_test_scaled'] = scaler.fit_transform(st.session_state['X_test'])
        st.write("X train data:", st.session_state['X_train_scaled'])
-       t.write("X test data:", st.session_state['X_test_scaled'])
+       st.write("X test data:", st.session_state['X_test_scaled'])
     if menu3 == "Machine Learning Model" and menu == "- - - - -" and menu2 == "- - - - -" and menu4 == "- - - - -":
        if st.session_state['X_train_scaled'] is None or st.session_state['X_test_scaled'] is None:
           if st.session_state['x_sm'] is None or st.session_state['y_sm'] is None:
