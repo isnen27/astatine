@@ -244,7 +244,6 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           scaler = StandardScaler()
           st.session_state['X_train_scaled'] = scaler.fit_transform(st.session_state['X_train'])
           st.session_state['X_test_scaled'] = scaler.fit_transform(st.session_state['X_test'])
-       st.subheader("Machine Learning Model")
        # Create an expander for SVM model
        st.subheader("Machine Learning Model")
        with st.expander("SVM Model"):
