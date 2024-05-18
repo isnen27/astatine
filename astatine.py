@@ -329,9 +329,9 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
            try:
               loaded_model = load_model(saved_model_path)
               st.success("Model loaded successfully")
-	   except Exception as e:
-	      logging.error("Error loading model", exc_info=True)
-	      st.error("Failed to load the model. Please check the logs for more details.")
+       except Exception as e:
+              logging.error("Error loading model", exc_info=True)
+              st.error("Failed to load the model. Please check the logs for more details.")
 
        # Define the range of values for each column
        column_ranges = {
