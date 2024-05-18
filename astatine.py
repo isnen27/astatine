@@ -208,120 +208,110 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        st.write("Statistics Descriptive Dataframe after Feature Selection :")
        st.write(df.describe().T)
     if menu2 == "Treatment for imbalance dataset" and menu == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
-       x_sm, y_sm = imbalance_treatment(df)
-       st.write("Y-value shape :", y_sm.shape)
-       st.write("X-value shape :", x_sm.shape)
-       st.write("Y-value count after resampling:", y_sm.value_counts())
-       st.write("Descriptive statistics after resampling:",df.describe().T)
+       if st.session_state['x_sm'] is None or st.session_state['y_sm'] is None:
+          st.session_state['x_sm'], st.session_state['y_sm'] = imbalance_treatment(st.session_state['df'])
+       st.write("Y-value shape :", st.session_state['y_sm'].shape)
+       st.write("X-value shape :", st.session_state['x_sm'].shape)
+       st.write("Y-value count after resampling:", st.session_state['y_sm'].value_counts())
+       st.write("Descriptive statistics after resampling:", st.session_state['df'].describe().T)
     if menu2 == "Data Splitting & Data Scalling" and menu == "- - - - -" and menu3 == "- - - - -" and menu4 == "- - - - -":
-       x_sm, y_sm = imbalance_treatment2(df)
-       X_train , X_test , Y_train , Y_test = train_test_split(x_sm,y_sm, test_size=0.3 , random_state=37)
-       scalar = StandardScaler()
-       X_train = scalar.fit_transform(X_train)
-       X_test = scalar.fit_transform(X_test)
-       st.write("X train data:",X_train)
-       st.write("X test data:",X_test)
+       if st.session_state['X_train'] is None or st.session_state['X_test'] is None:
+          if st.session_state['x_sm'] is None or st.session_state['y_sm'] is None:
+             st.session_state['x_sm'], st.session_state['y_sm'] = imbalance_treatment2(st.session_state['df'])
+          st.session_state['X_train'], st.session_state['X_test'], st.session_state['Y_train'], st.session_state['Y_test'] = train_test_split(st.session_state['x_sm'], st.session_state['y_sm'], test_size=0.3, random_state=37)
+        scaler = StandardScaler()
+          st.session_state['X_train_scaled'] = scaler.fit_transform(st.session_state['X_train'])
+          st.session_state['X_test_scaled'] = scaler.fit_transform(st.session_state['X_test'])
+       st.write("X train data:", st.session_state['X_train_scaled'])
+       t.write("X test data:", st.session_state['X_test_scaled'])
     if menu3 == "Machine Learning Model" and menu == "- - - - -" and menu2 == "- - - - -" and menu4 == "- - - - -":
-       x_sm, y_sm = imbalance_treatment2(df)
-       X_train_scaled, X_test_scaled, Y_train, Y_test = data_split_and_scale(x_sm, y_sm)
-       X_train , X_test , Y_train , Y_test = train_test_split(x_sm,y_sm, test_size=0.3 , random_state=37)
-       scalar = StandardScaler()
-       X_train = scalar.fit_transform(X_train)
-       X_test = scalar.fit_transform(X_test)
+       if st.session_state['X_train_scaled'] is None or st.session_state['X_test_scaled'] is None:
+          if st.session_state['x_sm'] is None or st.session_state['y_sm'] is None:
+             st.session_state['x_sm'], st.session_state['y_sm'] = imbalance_treatment2(st.session_state['df'])
+          st.session_state['X_train'], st.session_state['X_test'], st.session_state['Y_train'], st.session_state['Y_test'] = train_test_split(st.session_state['x_sm'], st.session_state['y_sm'], test_size=0.3, random_state=37)
+        scaler = StandardScaler()
+          st.session_state['X_train_scaled'] = scaler.fit_transform(st.session_state['X_train'])
+          st.session_state['X_test_scaled'] = scaler.fit_transform(st.session_state['X_test'])
        st.subheader("Machine Learning Model")
        # Create an expander for SVM model
+       st.subheader("Machine Learning Model")
        with st.expander("SVM Model"):
-            svm_model(X_train, Y_train, X_test, Y_test)
-       # Create an expander for XGBoost model
+            svm_model(st.session_state['X_train_scaled'], st.session_state['Y_train'], st.session_state['X_test_scaled'], st.session_state['Y_test'])
        with st.expander("XGBoost Model"):
-            xgboost_model(X_train, Y_train, X_test, Y_test)
-       # Create an expander for Random Forest model
+            xgboost_model(st.session_state['X_train_scaled'], st.session_state['Y_train'], st.session_state['X_test_scaled'], st.session_state['Y_test'])
        with st.expander("Random Forest Model"):
-            random_forest_model(X_train, Y_train, X_test, Y_test)
-       # Create an expander for Naive Bayes model
+            random_forest_model(st.session_state['X_train_scaled'], st.session_state['Y_train'], st.session_state['X_test_scaled'], st.session_state['Y_test'])
        with st.expander("Naive Bayes Model"):
-            naive_bayes_model(X_train, Y_train, X_test, Y_test)
-       # Create an expander for ANN model
+            naive_bayes_model(st.session_state['X_train_scaled'], st.session_state['Y_train'], st.session_state['X_test_scaled'], st.session_state['Y_test'])
        with st.expander("ANN Model"):
-            ann_model(X_train, Y_train, X_test, Y_test)
+            ann_model(st.session_state['X_train_scaled'], st.session_state['Y_train'], st.session_state['X_test_scaled'], st.session_state['Y_test'])
         
     if menu3 == "Model Evaluation" and menu == "- - - - -" and menu2 == "- - - - -" and menu4 == "- - - - -":
-       st.set_option('deprecation.showPyplotGlobalUse', False)
-       x_sm, y_sm = imbalance_treatment2(df)
-       X_train , X_test , Y_train , Y_test = train_test_split(x_sm,y_sm, test_size=0.3 , random_state=37)
-       scalar = StandardScaler()
-       X_train = scalar.fit_transform(X_train)
-       X_test = scalar.fit_transform(X_test)
+       if st.session_state['X_train_scaled'] is None or st.session_state['X_test_scaled'] is None:
+          if st.session_state['x_sm'] is None or st.session_state['y_sm'] is None:
+             st.session_state['x_sm'], st.session_state['y_sm'] = imbalance_treatment2(st.session_state['df'])
+          st.session_state['X_train'], st.session_state['X_test'], st.session_state['Y_train'], st.session_state['Y_test'] = train_test_split(st.session_state['x_sm'], st.session_state['y_sm'], test_size=0.3, random_state=37)
+        scaler = StandardScaler()
+          st.session_state['X_train_scaled'] = scaler.fit_transform(st.session_state['X_train'])
+          st.session_state['X_test_scaled'] = scaler.fit_transform(st.session_state['X_test'])
        st.subheader("Model Evaluation")
        #SVM
        svm = SVC(kernel='rbf', C=1.0)
-       svm.fit(X_train, Y_train)
-       # Predictions
-       y_pred_svm = svm.predict(X_test)
-       # Calculate scores
-       train_score_svm = svm.score(X_train, Y_train)
-       test_score_svm = svm.score(X_test, Y_test)
-       # Calculate MSE & RMSE
-       mse_svm = mean_squared_error(Y_test, y_pred_svm)
+       svm.fit(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       y_pred_svm = svm.predict(st.session_state['X_test_scaled'])
+       train_score_svm = svm.score(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       test_score_svm = svm.score(st.session_state['X_test_scaled'], st.session_state['Y_test'])
+       mse_svm = mean_squared_error(st.session_state['Y_test'], y_pred_svm)
        rmse_svm = np.sqrt(mse_svm)
        
        #XGBost
        xg = XGBClassifier(eval_metric='error', learning_rate=0.1)
-       xg.fit(X_train, Y_train)
-       # Predictions
-       y_pred_xg = xg.predict(X_test)
-       # Calculate scores
-       train_score_xg = xg.score(X_train, Y_train)
-       test_score_xg = xg.score(X_test, Y_test)
-       # Calculate MSE & RMSE
-       mse_xg = mean_squared_error(Y_test, y_pred_xg)
+       xg.fit(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       y_pred_xg = xg.predict(st.session_state['X_test_scaled'])
+       train_score_xg = xg.score(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       test_score_xg = xg.score(st.session_state['X_test_scaled'], st.session_state['Y_test'])
+       mse_xg = mean_squared_error(st.session_state['Y_test'], y_pred_xg)
        rmse_xg = np.sqrt(mse_xg)
        
        #Random Forest
        rf = RandomForestClassifier(max_depth=12, n_estimators=10, random_state=42)
-       rf.fit(X_train, Y_train)
-       # Predictions
-       y_pred_rf = rf.predict(X_test)
-       # Calculate scores
-       train_score = rf.score(X_train, Y_train)
-       test_score = rf.score(X_test, Y_test)
-       # Calculate MSE & RMSE
-       mse_rf = mean_squared_error(Y_test, y_pred_rf)
-       rmse_rf = np.sqrt(mean_squared_error(Y_test, y_pred_rf))
+       rf.fit(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       y_pred_rf = rf.predict(st.session_state['X_test_scaled'])
+       train_score_rf = rf.score(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       test_score_rf = rf.score(st.session_state['X_test_scaled'], st.session_state['Y_test'])
+       mse_rf = mean_squared_error(st.session_state['Y_test'], y_pred_rf)
+       rmse_rf = np.sqrt(mse_rf)
        
        #Naive Bayes
        gnb = GaussianNB()
-       gnb.fit(X_train, Y_train)
-       # Predictions
-       y_pred_gnb = gnb.predict(X_test)
-       # Calculate scores
-       train_score_gnb = gnb.score(X_train, Y_train)
-       test_score_gnb = gnb.score(X_test, Y_test)
-       # Calculate MSE & RMSE
-       mse_gnb = mean_squared_error(Y_test, y_pred_gnb)
+       gnb.fit(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       y_pred_gnb = gnb.predict(st.session_state['X_test_scaled'])
+       train_score_gnb = gnb.score(st.session_state['X_train_scaled'], st.session_state['Y_train'])
+       test_score_gnb = gnb.score(st.session_state['X_test_scaled'], st.session_state['Y_test'])
+       mse_gnb = mean_squared_error(st.session_state['Y_test'], y_pred_gnb)
        rmse_gnb = np.sqrt(mse_gnb)
        
        #ANN
        model_ann = Sequential()
-       model_ann.add(Dense(64, activation='relu', input_dim=X_train.shape[1]))
+       model_ann.add(Dense(64, activation='relu', input_dim=st.session_state['X_train_scaled'].shape[1]))
        model_ann.add(Dense(64, activation='relu'))
        model_ann.add(Dense(1, activation='sigmoid'))
        model_ann.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-       history = model_ann.fit(X_train, Y_train, epochs=10, batch_size=32, validation_data=(X_test, Y_test), verbose=0)
-       # Predictions
-       y_pred_prob_ann = model_ann.predict(X_test)
+       history = model_ann.fit(st.session_state['X_train_scaled'], st.session_state['Y_train'], epochs=10, batch_size=32, validation_data=(st.session_state['X_test_scaled'], st.session_state['Y_test']), verbose=0)
+       y_pred_prob_ann = model_ann.predict(st.session_state['X_test_scaled'])
        y_pred_ann = (y_pred_prob_ann > 0.5).astype(int)
-       # Calculate scores
-       train_score_ann = model_ann.evaluate(X_train, Y_train, verbose=0)
-       test_score_ann = model_ann.evaluate(X_test, Y_test, verbose=0)
-       # Calculate MSE & RMSE
-       mse_ann = mean_squared_error(Y_test, y_pred_ann)
+       train_score_ann = model_ann.evaluate(st.session_state['X_train_scaled'], st.session_state['Y_train'], verbose=0)
+       test_score_ann = model_ann.evaluate(st.session_state['X_test_scaled'], st.session_state['Y_test'], verbose=0)
+       mse_ann = mean_squared_error(st.session_state['Y_test'], y_pred_ann)
        rmse_ann = np.sqrt(mse_ann)
 
-       evaluated_models = evaluate_models(X_train, X_test, Y_train, Y_test, svm, xg, rf, gnb, train_score_ann, test_score_ann, mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann, rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
+       evaluated_models = evaluate_models(
+	       st.session_state['X_train_scaled'], st.session_state['X_test_scaled'], st.session_state['Y_train'], st.session_state['Y_test'],
+	       svm, xg, rf, gnb, train_score_ann, test_score_ann,mse_svm, mse_xg, mse_rf, mse_gnb, mse_ann,rmse_svm, rmse_xg, rmse_rf, rmse_gnb, rmse_ann)
        st.dataframe(evaluated_models)
        st.subheader("ROC Plot")
-       plot_roc_auc(X_test, Y_test, y_pred_svm, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
+       plot_roc_auc(
+       st.session_state['X_test_scaled'], st.session_state['Y_test'],y_pred_svm, y_pred_xg, y_pred_rf, y_pred_gnb, y_pred_ann)
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
