@@ -60,6 +60,18 @@ def load_data():
     df = pd.read_csv('diabetes_binary_health_indicators_BRFSS2015.csv')
     return df
 df = load_data()
+# Initialize session state if not already done
+if 'initialized' not in st.session_state:
+    st.session_state['initialized'] = True
+    st.session_state['df'] = df.copy()
+    st.session_state['x_sm'] = None
+    st.session_state['y_sm'] = None
+    st.session_state['X_train'] = None
+    st.session_state['X_test'] = None
+    st.session_state['Y_train'] = None
+    st.session_state['Y_test'] = None
+    st.session_state['X_train_scaled'] = None
+    st.session_state['X_test_scaled'] = None
 
 def main(df):
     # Session State Handling
