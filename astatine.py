@@ -24,6 +24,7 @@ import io
 # for model preparation
 import sklearn
 from sklearn.model_selection import train_test_split
+from imblearn.combine import SMOTETomek
 from imblearn.under_sampling import NearMiss
 from sklearn.model_selection import GridSearchCV, cross_val_score
 from sklearn.preprocessing import StandardScaler
