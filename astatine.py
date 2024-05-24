@@ -327,7 +327,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
-       saved_model_path = 'ann_model.keras'
+       saved_model_path = 'ann2_model.keras'
        loaded_model = load_model(saved_model_path)
        if not os.path.exists(saved_model_path):
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
@@ -427,6 +427,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           if all(value is not None for value in new_data.values()):
                # Predict using the loaded model
                predicted_diabetes = loaded_model.predict(new_df)
+		  st.write("predicted_diabetes")
                # Print prediction result
                if predicted_diabetes[0] > 0.5:
                   st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
