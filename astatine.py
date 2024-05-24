@@ -74,6 +74,9 @@ if 'initialized' not in st.session_state:
     st.session_state['X_train_scaled'] = None
     st.session_state['X_test_scaled'] = None
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
 def main(df):
     # Session State Handling
     # Main Page Design
@@ -424,17 +427,27 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           # Convert input data to DataFrame
           new_df = pd.DataFrame([new_data])
           st.write(new_df)
+          # Log the shape and data types of the input DataFrame
+          logging.info(f"Input DataFrame shape: {new_df.shape}")
+          logging.info(f"Input DataFrame dtypes: {new_df.dtypes}")
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
-               # Predict using the loaded model
-               predicted_diabetes = loaded_model.predict(new_df)[0]
-               st.write(f"Prediction: {predicted_diabetes:.4f}")
-               # Print prediction result
-               if predicted_diabetes > 0.5:
-                  st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
-               else:
-                  st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
+              try:
+                 # Ensure input data has the correct shape for the model
+                 input_data = new_df.values.astype('float32')  # Convert to numpy array and ensure type is float32
+                 logging.info(f"Input data shape for prediction: {input_data.shape}")
+	         # Predict using the loaded model
+                 predicted_diabetes = loaded_model.predict(new_df)[0]
+                 st.write(f"Prediction: {predicted_diabetes:.4f}")
+                 # Print prediction result
+                 if predicted_diabetes > 0.5:
+                    st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
+                 else:
+                    st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
+              except Exception as e:
+                    logging.error("Error during prediction", exc_info=True)
+                    st.error("Failed to make a prediction. Please check the logs for more details.")
           else:
             st.write("Please provide values for all features to make a prediction.")
 
