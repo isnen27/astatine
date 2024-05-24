@@ -425,20 +425,14 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
-              try:
-                 # Ensure input data has the correct shape for the model
-                 input_data = new_df.values.astype('int')  # Convert to numpy array and ensure type is float32
-	         # Predict using the loaded model
-                 predicted_diabetes = loaded_model.predict(new_df)[0]
-                 st.write(f"Prediction: {predicted_diabetes:.4f}")
-                 # Print prediction result
-                 if predicted_diabetes > 0.5:
-                    st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
-                 else:
-                    st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
-              except Exception as e:
-                    logging.error("Error during prediction", exc_info=True)
-                    st.error("Failed to make a prediction. Please check the logs for more details.")
+             # Predict using the loaded model
+             predicted_diabetes = loaded_model.predict(new_df)
+             st.write(f"Prediction: {predicted_diabetes:.4f}")
+             # Print prediction result
+             if predicted_diabetes > 0.5:
+                st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
+             else:
+                st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
           else:
             st.write("Please provide values for all features to make a prediction.")
 
