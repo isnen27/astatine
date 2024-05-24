@@ -74,6 +74,8 @@ if 'initialized' not in st.session_state:
     st.session_state['X_train_scaled'] = None
     st.session_state['X_test_scaled'] = None
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 def main(df):
     # Session State Handling
     # Main Page Design
