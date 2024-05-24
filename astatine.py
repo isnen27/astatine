@@ -422,6 +422,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        if st.button("Process"):
           # Convert input data to DataFrame
           new_df = pd.DataFrame([new_data])
+          st.write(new_df)
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
