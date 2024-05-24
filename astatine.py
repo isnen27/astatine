@@ -334,7 +334,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        else:
            try:
               logging.info(f"Loading model from {saved_model_path}")
-	      loaded_model = joblib.load(saved_model_path)
+              loaded_model = joblib.load(saved_model_path)
               st.success("Model loaded successfully")
            except Exception as e:
               logging.error("Error loading model", exc_info=True)
