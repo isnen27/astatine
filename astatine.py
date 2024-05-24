@@ -74,8 +74,6 @@ if 'initialized' not in st.session_state:
     st.session_state['X_train_scaled'] = None
     st.session_state['X_test_scaled'] = None
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG)
 def main(df):
     # Session State Handling
     # Main Page Design
@@ -335,7 +333,8 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
        else:
            try:
-              loaded_model = joblib.load(saved_model_path)
+              logging.info(f"Loading model from {saved_model_path}")
+	      loaded_model = joblib.load(saved_model_path)
               st.success("Model loaded successfully")
            except Exception as e:
               logging.error("Error loading model", exc_info=True)
