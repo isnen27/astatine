@@ -333,11 +333,9 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
        else:
            try:
-              logging.info(f"Loading model from {saved_model_path}")
               loaded_model = tf.keras.models.load_model(saved_model_path)
               st.success("Model loaded successfully")
            except Exception as e:
-              logging.error("Error loading model", exc_info=True)
               st.error("Failed to load the model. Please check the logs for more details.")
               return
        # Define the range of values for each column
@@ -424,16 +422,12 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           # Convert input data to DataFrame
           new_df = pd.DataFrame([new_data])
           st.write(new_df)
-          # Log the shape and data types of the input DataFrame
-          logging.info(f"Input DataFrame shape: {new_df.shape}")
-          logging.info(f"Input DataFrame dtypes: {new_df.dtypes}")
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
               try:
                  # Ensure input data has the correct shape for the model
-                 input_data = new_df.values.astype('float32')  # Convert to numpy array and ensure type is float32
-                 logging.info(f"Input data shape for prediction: {input_data.shape}")
+                 input_data = new_df.values.astype('int')  # Convert to numpy array and ensure type is float32
 	         # Predict using the loaded model
                  predicted_diabetes = loaded_model.predict(new_df)[0]
                  st.write(f"Prediction: {predicted_diabetes:.4f}")
