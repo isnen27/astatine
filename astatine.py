@@ -421,13 +421,13 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        if st.button("Process"):
           # Convert input data to DataFrame
           new_df = pd.DataFrame([new_data])
+          st.write("Input New Data:")
           st.write(new_df)
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
              # Predict using the loaded model
              predicted_diabetes = loaded_model.predict(new_df)
-             st.write(predicted_diabetes)
              # Print prediction result
              if predicted_diabetes > 0.5:
                 st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
