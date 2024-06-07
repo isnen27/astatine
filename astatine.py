@@ -439,7 +439,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
              if predicted_diabetes[0] > 0.5:
                 st.write("Based on our research model, it is predicted that you have a Prediabetes/Diabetes status. We recommend you see a doctor soon.")
              else:
-                st.write("Based on our research model, it is predicted that you do not have a Diabetes status. Enjoy your life.")
+                st.write("Based on our research model, it is predicted that you **don't** have a Diabetes status. Enjoy your life.")
           else:
             st.write("Please provide values for all features to make a prediction.")
 
