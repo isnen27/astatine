@@ -338,7 +338,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               st.success("Model loaded successfully")
               # Retrieve expected feature names from the model
               expected_feature_names = loaded_model.feature_names_in_
-              st.write("Expected feature names:", expected_feature_names)
+              #st.write("Expected feature names:", expected_feature_names)
            except Exception as e:
               st.error("Failed to load the model. Please check the logs for more details.")
               st.write(f"Error details: {e}")
