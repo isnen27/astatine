@@ -336,8 +336,12 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               with open(saved_model_path, 'rb') as file:
                    loaded_model = pickle.load(file)
               st.success("Model loaded successfully")
+              # Retrieve expected feature names from the model
+              expected_feature_names = loaded_model.feature_names_in_
+              st.write("Expected feature names:", expected_feature_names)
            except Exception as e:
               st.error("Failed to load the model. Please check the logs for more details.")
+              st.write(f"Error details: {e}")
               return
        # Define the range of values for each column
        column_ranges = {
@@ -424,6 +428,8 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
           new_df = pd.DataFrame([new_data])
           st.write("Input New Data:")
           st.write(new_df)
+          # Ensure the input dataframe columns are in the same order as the model expects
+          new_df = new_df[expected_feature_names]
 
           # Make prediction if all values are provided
           if all(value is not None for value in new_data.values()):
