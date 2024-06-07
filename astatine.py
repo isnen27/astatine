@@ -448,7 +448,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
        st.write('''
        1. The target variable Diabetes_binary has 2 classes. 0 is for no diabetes, and 1 is for prediabetes or diabetes. This dataset has 21 feature variables and is not balanced. This dataset has 21 feature variables.\n
        2. Variables that has strong corralation with diabetes are general health (GenHlth), high blood pressure (HighBP), difficulty walking (DiffWalk), and Body Mass Index (BMI).\n
-       3. The best model for predict prediabetes/diabetes stage is **ANN** with **accuracy of 0.87**.\n''')
+       3. The best model for predict prediabetes/diabetes stage is **XGBoost** with **accuracy of 0.87**.\n''')
 
 
 if __name__=="__main__":
