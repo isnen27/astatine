@@ -327,13 +327,14 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
-       saved_model_path = 'ann_model.keras'
-       #loaded_model = tf.keras.models.load_model(saved_model_path)
+       saved_model_path = 'xgboost_model.pkl'
+       
        if not os.path.exists(saved_model_path):
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
        else:
            try:
-              loaded_model = tf.keras.models.load_model(saved_model_path)
+              with open(saved_model_path, 'rb') as file:
+                   loaded_model = pickle.load(file)
               st.success("Model loaded successfully")
            except Exception as e:
               st.error("Failed to load the model. Please check the logs for more details.")
