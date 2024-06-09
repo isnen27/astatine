@@ -327,7 +327,7 @@ Weak Correlation: Smoker, Sex, AnyHealthcare, NoDocbcCost, Fruits, Veggies''')
               
     if menu4 == "ASTATINE App" and menu == "- - - - -" and menu2 == "- - - - -" and menu3 == "- - - - -":
        # Load the saved model
-       saved_model_path = 'xgboost_model.pkl'
+       saved_model_path = 'xgboost_best_model.pkl'
        
        if not os.path.exists(saved_model_path):
               st.error(f"Model file does not exist at the specified path: {saved_model_path}")
